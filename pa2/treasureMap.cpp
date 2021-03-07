@@ -95,25 +95,24 @@ PNG treasureMap::renderMap(){
 }
 
 
-PNG treasureMap::renderMaze(){
+PNG decoder::renderMaze(){
 
-    PNG copy = base;
+	PNG copy = mapImg;
     queue<pair<int, int>> locations;
-    vector<vector<boolean>> visit(copy.width(), vector<boolean> (copy.height(), false));
-    vector<vector<int>> distance(copy.width(), vector<int> (copy.height()));
 
     for(int i = start.first-3; i =< start.first+3; i++){
         if(i>=0 && i < copy.width()){
             for(int j = start.second-3; j =< start.second+3; j++){
                 if(j>=0 && j < copy.height()){
-                    copy.getPixel(i, j) = new RGBAPixel(255, 0, 0);
+                    RGBAPixel *pixel = im.getPixel(x,y);
+                    pixel->r = 255;
+                    pixel->g = 0;
+                    pixel->b = 0;
                 }
             }
         }
     }
 
-    visit[start.first][start.second] = true;
-    distance[start.first][start.second] = 0;
     locations.enqueue(start);
 
     while(!location.isEmpty()) {
@@ -121,9 +120,7 @@ PNG treasureMap::renderMaze(){
         vector<pair<int,int>> neighbor = neighbors(curr);
         locations.dequeue();
         for(int i = 0; i < 4; i++){
-            if(neighbor[i]){
-                visit[neighbor[i].first][neighbor[i].second] = true;
-                distance[neighbor[i].first][neighbor[i].second] = distance[curr.first][curr.second] + 1;
+            if(good(visit, curr, neighbor[i])){
                 setGrey(copy, neighbor[i]);
                 locations.enqueue(neighbor[i]);
             }
