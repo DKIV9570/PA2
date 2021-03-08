@@ -19,21 +19,21 @@ decoder::decoder(const PNG &tm, pair<int, int> s)
     Queue <pair<int, int>> locations;
 
     locations.enqueue(start);
-    visit[start.first][start.second] = true;
+
     distance[start.first][start.second] = 0;
 
     while (!locations.isEmpty()) {
 
         pair<int, int> curr = locations.peek();
         visit[curr.first][curr.second] = true;
-        vector<pair<int, int>> neighbor = neighbors(curr);
         locations.dequeue();
 
+        vector<pair<int, int>> neighbor = neighbors(curr);
         for (int i = 0; i < 4; i++) {
             if (good(visit, distance, curr, neighbor[i])) {
 
                 distance[neighbor[i].first][neighbor[i].second] = distance[curr.first][curr.second] + 1;
-//                visit[neighbor[i].first][neighbor[i].second] = true;
+                visit[neighbor[i].first][neighbor[i].second] = true;
 
                 if (distance[neighbor[i].first][neighbor[i].second] > max) {
                     max = distance[neighbor[i].first][neighbor[i].second];
@@ -45,28 +45,25 @@ decoder::decoder(const PNG &tm, pair<int, int> s)
                 cout << "added" << neighbor[i].first << " " << neighbor[i].second << endl;
             }
         }
-//        cout << "for loop finished" << endl;
     }
-    cout << "finish loop1" << endl;
 
     pair<int, int> now = treasure;
     this->pathPts.push_back(now);
-    
 
     while (now != start) {
         now = prev[now.first][now.second];
-        pathPts.insert(pathPts.begin(), prev[now.first][now.second]);
+        pathPts.insert(pathPts.begin(), now);
     }
-    cout << "finish loop2"<<endl;
-    for(int i=0; i<pathPts.size();i++){
-        cout<<"("<<pathPts[i].first<<","<<pathPts[i].second<<")"<<endl;
+    cout << "finish loop2" << endl;
+    for (int i = 0; i < pathPts.size(); i++) {
+        cout << "(" << pathPts[i].first << "," << pathPts[i].second << ")" << endl;
     }
 }
 
 PNG decoder::renderSolution() {
 
     PNG copy = mapImg;
-    for (int i = 1; i < pathPts.size(); i++) {
+    for (int i = 0; i < pathPts.size(); i++) {
         RGBAPixel *pixel = copy.getPixel(pathPts[i].first, pathPts[i].second);
         pixel->r = 255;
         pixel->g = 0;
@@ -83,10 +80,10 @@ PNG decoder::renderMaze() {
     vector<vector<int>> distance(copy.width(), vector<int>(copy.height()));
     Queue <pair<int, int>> locations;
 
-
     locations.enqueue(start);
     visit[start.first][start.second] = true;
     distance[start.first][start.second] = 0;
+    cout << "begin" << endl;
     setGrey(copy, start);
 
     cout << "begin loop3";
@@ -95,40 +92,43 @@ PNG decoder::renderMaze() {
         vector<pair<int, int>> neighbor = neighbors(curr);
         visit[curr.first][curr.second] = true;
         locations.dequeue();
+
         for (int i = 0; i < 4; i++) {
             if (good(visit, distance, curr, neighbor[i])) {
-                setGrey(copy, neighbor[i]);
+
                 distance[neighbor[i].first][neighbor[i].second] = distance[curr.first][curr.second] + 1;
+                visit[neighbor[i].first][neighbor[i].second] = true;
+
                 locations.enqueue(neighbor[i]);
             }
         }
-    }
-    cout << "finish loop3";
-    for (int i = start.first - 3; i <= start.first + 3; i++) {
-        if (i >= 0 && i < copy.width()) {
-            for (int j = start.second - 3; j <= start.second + 3; j++) {
-                if (j >= 0 && j < copy.height()) {
-                    RGBAPixel *pixel = copy.getPixel(i, j);
-                    pixel->r = 255;
-                    pixel->g = 0;
-                    pixel->b = 0;
+        cout << "finish loop3";
+        for (int i = start.first - 3; i <= start.first + 3; i++) {
+            if (i >= 0 && i < copy.width()) {
+                for (int j = start.second - 3; j <= start.second + 3; j++) {
+                    if (j >= 0 && j < copy.height()) {
+                        RGBAPixel *pixel = copy.getPixel(i, j);
+                        pixel->r = 255;
+                        pixel->g = 0;
+                        pixel->b = 0;
+                    }
                 }
             }
         }
+
+        return copy;
     }
-
-    return copy;
 }
-
 
 void decoder::setGrey(PNG &im, pair<int, int> loc) {
 
     int x = loc.first;
     int y = loc.second;
     RGBAPixel *pixel = im.getPixel(x, y);
-    pixel->r = 2 * ((pixel->r) / 4);
-    pixel->g = 2 * ((pixel->g) / 4);
-    pixel->b = 2 * ((pixel->b) / 4);
+    pixel->r = 2*((int)(pixel->r)/4);
+    pixel->g = 2*((int)(pixel->g)/4);
+    pixel->b = 2*((int)(pixel->b)/4);
+    cout<<"finished grey"<<loc.first<<" "<<loc.second<<endl;
 }
 
 pair<int, int> decoder::findSpot() {
@@ -170,6 +170,7 @@ vector<pair<int, int>> decoder::neighbors(pair<int, int> curr) {
 
 
 bool decoder::compare(RGBAPixel *p, int d) {
+    d = d % 64;
     vector<int> bin_r = ten_2(p->r, 8);
     vector<int> bin_g = ten_2(p->g, 8);
     vector<int> bin_b = ten_2(p->b, 8);
