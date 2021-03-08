@@ -6,9 +6,10 @@
 
 template <class T>
 Deque<T>::Deque(){
+/* YOUR CODE HERE! */
 
-	n1 = 0;
-	n2 = -1;
+n1 = 0;
+n2 = -1;
 
 }
 
@@ -20,10 +21,8 @@ Deque<T>::Deque(){
 template <class T>
 void Deque<T>::pushR(T newItem)
 {
-
-	data.push_back(newItem);
+    data.push_back(newItem);
     n2++;
-
 }
 
 /**
@@ -37,22 +36,18 @@ void Deque<T>::pushR(T newItem)
 template <class T>
 T Deque<T>::popL()
 {
-    
-	T result = data.at(n1);
-	n1++;
-
-	if((n1-n2+1) < n2){
-		vector<T> temp;
-		for(int i = n1; i < n2; i++){
-			temp.push_back(data.at(i));
-		}
-		data = temp;
-		n2 = n2 - n1;
-		n1 = 0;
-	}
-
-	return result;
-
+    T result = data.at(n1);
+    n1++;
+    if(n2-n1 < n1){
+        vector<T> temp;
+        for (int i = n1; i<= n2; i++){
+            temp.push_back(data.at(i));
+        }
+        data = temp;
+        n2 = n2 - n1;
+        n1 = 0;
+    }
+    return result;
 }
 /**
  * Removes the object at the right of the Deque, and returns it to the
@@ -64,19 +59,17 @@ template <class T>
 T Deque<T>::popR()
 {
     T result = data.at(n2);
-    n2--;
     data.pop_back();
-
-    if((n1-n2+1) < n2){
-		vector<T> temp;
-		for(int i = n1; i < n2; i++){
-			temp.push_back(data.at(i));
-		}
-		data = temp;
-		n2 = n2 - n1;
-		n1 = 0;
-	}
-    
+    n2--;
+    if(n2-n1 < n1){
+        vector<T> temp;
+        for (int i = n1; i<= n2; i++){
+            temp.push_back(data.at(i));
+        }
+        data = temp;
+        n2 = n2 - n1;
+        n1 = 0;
+    }
     return result;
 }
 
@@ -112,6 +105,5 @@ T Deque<T>::peekR()
 template <class T>
 bool Deque<T>::isEmpty() const
 {
-    if(n2 - n1 == 0) return true;
-    return false;
+    return data.empty();
 }

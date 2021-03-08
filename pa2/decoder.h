@@ -86,8 +86,11 @@ private:
 
     // tests whether p's lower order bits, when interpreted as a 
     // number, is d+1 (mod 64).
-    bool compare(RGBAPixel p, int d);
+    bool compare(RGBAPixel *p, int d);
 
+    vector<int> ten_2(int n, int digit);
+
+    int two_10(vector<int> a);
     // changes the pixel at position loc to consist of colour channel
     // values which are 50% of their original. Note that because of 
     // our encoding scheme which essentially invalidates the lower
