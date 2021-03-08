@@ -43,6 +43,5 @@ bool treasureMap::good(vector<vector<bool>> & v, pair<int,int> curr, pair<int,in
 vector<pair<int,int>> treasureMap::neighbors(pair<int,int> curr) {
 
 /* YOUR CODE HERE */
-
 }
 
