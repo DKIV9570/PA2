@@ -50,30 +50,3 @@ bool Queue<T>::isEmpty() const
 {
     return myQueue.isEmpty();
 }
-
-/**
- * Finds the object at the front of the Queue, and returns it to the
- * caller. Unlike dequeue(), this operation does not alter the queue.
- *
- * @return The item at the front of the queue.
- */
-template <class T>
-T Queue<T>::peek()
-{
-    /**
-     * @todo Your code here! 
-     */
-}
-
-/**
- * Determines if the Queue is empty.
- *
- * @return bool which is true if the Queue is empty, false otherwise.
- */
-template <class T>
-bool Queue<T>::isEmpty() const
-{
-    /**
-     * @todo Your code here! 
-     */
-}
